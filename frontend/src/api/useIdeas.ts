@@ -2,10 +2,9 @@ import { api } from "@/lib/axios";
 import type { ApiRequestParams, Idea } from "@/lib/types";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-
 function unitQueryOptions({include}: ApiRequestParams) {
   return queryOptions({
-    queryKey: ['ideas', include ? `with:${include.join(',')}` : ''],
+    queryKey: ['ideas'],
     queryFn: async (): Promise<Idea[]> =>{  
       const { data } =  await api.get('idea', {
         params: {
