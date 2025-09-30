@@ -49,6 +49,12 @@ Vote.init(
     sequelize,
     tableName: 'votes',
     timestamps: true,
+    indexes: [
+    {
+      unique: true,
+      fields: ['client_ip', 'idea_id']
+    }
+  ]
   }
 )
 

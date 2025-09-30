@@ -45,7 +45,13 @@ services:
         condition: service_healthy
     networks:
       - app-network
-    command: npm run docker:start
+    command: >
+      sh -c "
+      echo 'Waiting for database to be ready...' &&
+      sleep 10 &&
+      npm run db:setup &&
+      npm run dev
+      "
 
   # Frontend
   frontend:

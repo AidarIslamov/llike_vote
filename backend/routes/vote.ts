@@ -32,10 +32,11 @@ export default async function voteRoutes(fastify: FastifyInstance) {
         }
       } catch (error: any) {
         if (error.message === 'VOTE_LIMIT_EXCEEDED') {
-          return reply.status(400).send({ 
+          return reply.status(409).send({ 
             error: 'Vote limit exceeded',
             limit: VoteService.VOTE_LIMIT,
-            canVote: false
+            canVote: false,
+            conflictType: 'LIMIT_EXCEEDED'
           })
         }
         

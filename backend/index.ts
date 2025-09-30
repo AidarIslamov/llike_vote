@@ -22,7 +22,7 @@ async function initializeDatabase() {
     console.log('Database connection established successfully.')
     
     if (process.env.NODE_ENV === 'development') {
-      await sequelize.sync({ force: false })
+      await sequelize.sync({ force: false, alter: false })
       console.log('Database synchronized')
     }
   } catch (error) {

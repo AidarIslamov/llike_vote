@@ -7,6 +7,8 @@ COPY tsconfig.json ./
 
 RUN npm install
 
+RUN npx sequelize-cli --version
+
 COPY . .
 
 EXPOSE 3000
