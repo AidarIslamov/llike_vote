@@ -12,7 +12,7 @@ import { Card, CardContent } from "./ui/card";
 import { Skeleton } from "./ui/skeleton";
 
 export function Ideas() {
-    const {data: ideas, isLoading} = useIdeas({include: ['votes']});
+    const {data: ideas, isLoading} = useIdeas({include: ['votesCount']});
     console.log(ideas)
     return (
         <Card className="min-w-[500px]">
@@ -28,8 +28,8 @@ export function Ideas() {
                     </TableHeader>
                     <TableBody>
                         {isLoading ? (
-                            [...Array(3)].map((item) => (
-                                <TableRow key={item}>
+                            [...Array(3)].map((_, key) => (
+                                <TableRow key={key}>
                                     <TableCell className="font-medium"><Skeleton className="bg-zinc-100 h-7" /></TableCell>
                                     <TableCell><Skeleton className="bg-zinc-100 h-7" /></TableCell>
                                     <TableCell><Skeleton className="bg-zinc-100 h-7" /></TableCell>

@@ -12,7 +12,7 @@ function unitQueryOptions({include}: ApiRequestParams) {
           include: include ? include.join(',') : '',
         },
       })
-      return data;
+      return data.data;
     },
   });
 }
