@@ -1,10 +1,17 @@
 import Fastify from 'fastify'
 import routes from './routes/index.js'
 import { sequelize } from './models/index.js'
+import cors from '@fastify/cors'
+
 
 const fastify = Fastify({
   logger: true,
   trustProxy: true
+})
+
+await fastify.register(cors, {
+  origin: ['http://localhost', 'http://localhost:5173'],
+  credentials: true
 })
 
 fastify.register(routes)
