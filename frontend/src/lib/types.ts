@@ -12,3 +12,9 @@ export type ApiRequestParams = {
   id?: number | null;
   include?: string[] | number[] | null;
 };
+
+export interface VoteError {
+  canVote?: boolean
+  error?: string
+  limit?: number
+}

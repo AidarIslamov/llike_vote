@@ -7,21 +7,30 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Idea } from "@/lib/types";
+import type { Idea, VoteError } from "@/lib/types";
 import { Card, CardContent } from "./ui/card";
 import { Skeleton } from "./ui/skeleton";
 import { Button } from "./ui/button";
 import { queryClient } from "@/lib/queryClient";
 import { api } from "@/lib/axios";
+import { useState } from "react";
 
 export function Ideas() {
   const { data: ideas, isLoading } = useIdeas({ include: ["votesCount"] });
-
+  const [canVote, setCanVote] = useState<boolean>(true); 
+    // OPTIMIZE: сохранять состояние в localStorage, чтобы при перезагрузке страницы 
+    // пользователь видел заблокированную кнопку
 
   async function handleClick(ideaId: number) {
-     const { data } = await api.post(`vote/${ideaId}`)
-    await queryClient.invalidateQueries({ queryKey: ['ideas'] })
-    return data;
+    try {
+      await api.post(`vote/${ideaId}`);
+      await queryClient.invalidateQueries({ queryKey: ["ideas"] });
+    } catch (error) {
+      const errorData = error as VoteError;
+        if (errorData.canVote === false) {
+          setCanVote(false);
+        }
+    }
   }
 
   return (
@@ -63,6 +72,7 @@ export function Ideas() {
                       <Button
                         variant="success"
                         onClick={() => handleClick(idea.id)}
+                        disabled={!canVote}
                       >
                         Vote
                       </Button>
