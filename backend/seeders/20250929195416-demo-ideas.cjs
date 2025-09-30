@@ -9,9 +9,8 @@ module.exports = {
     
     const count = parseInt(existingCount[0].count);
 
-    if (count === 0) {
-      await queryInterface.bulkInsert('ideas', [
-        {
+    const mockIdeas = [
+      {
           title: 'Умная система управления задачами',
         },
         {
@@ -56,7 +55,10 @@ module.exports = {
         {
           title: 'Социальная платформа для волонтерства',
         }
-      ], {});
+    ]
+
+    if (count === 0) {
+      await queryInterface.bulkInsert('ideas', mockIdeas, {});
     }
   },
 
