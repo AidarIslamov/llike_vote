@@ -1,19 +1,26 @@
 import { api } from "@/lib/axios";
-import { useQuery } from "@tanstack/react-query";
+import type { ApiRequestParams, Idea } from "@/lib/types";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export function useIdeas() {
-  return useQuery({
-    queryKey: ['places'],
-    queryFn: async () => {
-      const {
-        data: { data, meta, links },
-      } = await api.get('/idea');
-      return {
-        data,
-        links,
-        meta,
-      };
+
+function unitQueryOptions({include}: ApiRequestParams) {
+  return queryOptions({
+    queryKey: ['ideas', include ? `with:${include.join(',')}` : ''],
+    queryFn: async (): Promise<Idea[]> =>{  
+      const { data } =  await api.get('idea', {
+        params: {
+          include: include ? include.join(',') : '',
+        },
+      })
+      return data;
     },
-    retry: false,
+  });
+}
+
+
+export function useIdeas(params?: ApiRequestParams ) {
+  const { include = null } = params ?? {};
+  return useQuery({
+    ...unitQueryOptions({include})
   });
 }

@@ -11,7 +11,10 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Ideas />
+      <div className='min-h-screen w-screen flex items-center justify-center bg-muted/40'>
+        <Ideas />
+      </div>
+      
     </QueryClientProvider>
   )
 }
