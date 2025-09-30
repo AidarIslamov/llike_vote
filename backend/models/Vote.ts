@@ -7,9 +7,10 @@ interface VoteAttributes {
   ideaId: number
   clientIP: string
   createdAt?: Date
+  updatedAt?: Date
 }
 
-interface VoteCreationAttributes extends Optional<VoteAttributes, 'id' | 'createdAt'> {}
+interface VoteCreationAttributes extends Optional<VoteAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 class Vote extends Model<VoteAttributes, VoteCreationAttributes> implements VoteAttributes {
   public id!: number
@@ -43,6 +44,14 @@ Vote.init(
       type: DataTypes.STRING,
       allowNull: false,
       field: 'client_ip'
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      field: 'created_at' // ← явное указание имени поля в БД
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      field: 'updated_at' // ← явное указание имени поля в БД
     }
   },
   {

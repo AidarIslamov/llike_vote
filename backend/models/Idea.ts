@@ -31,6 +31,14 @@ Idea.init(
     title: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      field: 'created_at' 
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      field: 'updated_at' 
     }
   },
   {

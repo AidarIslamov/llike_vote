@@ -1,5 +1,6 @@
 import { Vote, Idea } from "../models";
 import sequelize from "../config/database";
+import { isSequelizeError } from "../utils/typeGuards";
 
 export class VoteService {
   private static _VOTE_LIMIT = parseInt(process.env.VOTE_LIMIT || "10");
@@ -21,30 +22,36 @@ export class VoteService {
         transaction,
       });
 
-      const voteCount = await Vote.count({
+      const totalVoteCount = await Vote.count({
         where: { clientIP },
         transaction,
       });
 
-      if (voteCount >= this._VOTE_LIMIT) {
+      if (totalVoteCount >= this._VOTE_LIMIT) {
         throw new Error("VOTE_LIMIT_EXCEEDED");
       }
 
       const idea = await Idea.findByPk(ideaId, { transaction });
       if (!idea) throw new Error("IDEA_NOT_FOUND");
 
-      // Создаем голос - (не орграничиваем кол-во голосов за одну идею)
       const vote = await Vote.create({ ideaId, clientIP }, { transaction });
 
       await transaction.commit();
 
       return {
         vote,
-        canVote: voteCount + 1 < this._VOTE_LIMIT,
-        remainingVotes: this._VOTE_LIMIT - (voteCount + 1),
+        canVote: totalVoteCount + 1 < this._VOTE_LIMIT,
+        remainingVotes: this._VOTE_LIMIT - (totalVoteCount + 1),
       };
     } catch (error) {
       await transaction.rollback();
+
+      if (
+        isSequelizeError(error) &&
+        error.name === "SequelizeUniqueConstraintError"
+      ) {
+        throw new Error("ALREADY_VOTED_FOR_IDEA");
+      }
       throw error;
     }
   }
