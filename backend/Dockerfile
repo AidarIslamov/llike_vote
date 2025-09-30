@@ -1,4 +1,3 @@
-# backend/Dockerfile
 FROM node:18-alpine
 
 WORKDIR /app
@@ -10,8 +9,8 @@ COPY tsconfig.json ./
 # Устанавливаем зависимости
 RUN npm install
 
-# Копируем исходный код
-COPY src/ ./src/
+# Копируем ВСЕ исходные файлы (кроме node_modules через .dockerignore)
+COPY . .
 
 # Экспоз порта
 EXPOSE 3000
