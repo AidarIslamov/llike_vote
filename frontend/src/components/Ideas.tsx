@@ -2,7 +2,6 @@ import { useIdeas } from "@/api/useIdeas"
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -10,15 +9,15 @@ import {
 } from "@/components/ui/table"
 import type { Idea } from "@/lib/types";
 import { Card, CardContent } from "./ui/card";
+import { Skeleton } from "./ui/skeleton";
 
 export function Ideas() {
-    const {data: ideas} = useIdeas({include: ['votes']});
+    const {data: ideas, isLoading} = useIdeas({include: ['votes']});
     console.log(ideas)
     return (
         <Card className="min-w-[500px]">
             <CardContent>
                 <Table>
-                    <TableCaption>A list of ideas.</TableCaption>
                     <TableHeader>
                         <TableRow>
                             <TableHead className="w-[100px]">#</TableHead>
@@ -28,14 +27,26 @@ export function Ideas() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {ideas?.map((idea: Idea) => (
-                            <TableRow>
-                                <TableCell className="font-medium">{idea.id}</TableCell>
-                                <TableCell>{idea.title}</TableCell>
-                                <TableCell>WIP!!!</TableCell>
-                                <TableCell className="text-right">WIP!!!</TableCell>
-                            </TableRow>
-                        ))}       
+                        {isLoading ? (
+                            [...Array(3)].map((item) => (
+                                <TableRow key={item}>
+                                    <TableCell className="font-medium"><Skeleton className="bg-zinc-100 h-7" /></TableCell>
+                                    <TableCell><Skeleton className="bg-zinc-100 h-7" /></TableCell>
+                                    <TableCell><Skeleton className="bg-zinc-100 h-7" /></TableCell>
+                                    <TableCell><Skeleton className="bg-zinc-100 h-7" /></TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                            ideas?.map((idea: Idea) => (
+                                <TableRow key={idea.id}>
+                                    <TableCell className="font-medium">{idea.id}</TableCell>
+                                    <TableCell>{idea.title}</TableCell>
+                                    <TableCell>WIP!!!</TableCell>
+                                    <TableCell className="text-right">WIP!!!</TableCell>
+                                </TableRow>
+                            ))
+                        )}
+ 
                     </TableBody>
                 </Table>
             </CardContent>
