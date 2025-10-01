@@ -1,18 +1,32 @@
-import { FastifyInstance } from 'fastify'
-import { Idea } from '../models'
-import { getClientIP } from '../utils/ip';
+import { FastifyInstance } from "fastify";
+import { Idea, sequelize, Vote } from "../models";
+import { getClientIP } from "../utils/ip";
 
 export default async function ideaRoutes(fastify: FastifyInstance) {
-  fastify.get('/idea', {
+  fastify.get("/idea", {
     handler: async (request, reply) => {
       const clientIP = getClientIP(request);
       if (!clientIP) {
-        return reply.status(400).send({ 
-          error: 'Client IP address is required' 
+        return reply.status(400).send({
+          error: "Client IP address is required",
         });
       }
-        return { data: ideas }
-      }
-    }
-  })
+
+      const VOTE_LIMIT = parseInt(process.env.VOTE_LIMIT || "10");
+      const totalVoteCount = await Vote.count({
+        where: { clientIP },
+      });
+
+      const ideas = await Idea.scope([
+        "withVotesCount",
+        { method: ["withEnableVote", clientIP] },
+      ]).findAll({
+        order: [
+          [sequelize.literal('"enableVote"'), 'DESC'], // сначала те, за которые можно голосовать
+          [sequelize.literal('"votesCount"'), 'DESC']  // затем по популярности
+        ]
+      });
+      return { data: ideas, limitExceeded:  totalVoteCount >= VOTE_LIMIT};
+    },
+  });
 }
