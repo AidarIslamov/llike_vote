@@ -21,6 +21,12 @@ export default async function voteRoutes(fastify: FastifyInstance) {
       const ideaId = parseInt(id)
       const clientIP = getClientIP(request)
 
+      if (!clientIP) {
+        return reply.status(400).send({ 
+          error: 'Client IP address is required' 
+        });
+      }
+
       try {
         const { vote } = await VoteService.createVote(ideaId, clientIP)
 
