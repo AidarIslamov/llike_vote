@@ -3,15 +3,14 @@
 export interface Idea {
     id: number;
     title: string;
-    votes?: number;
-    votesCount?: number;
+    votesCount: number;
+    enableVote: boolean;
 }
 
-
-export type ApiRequestParams = {
-  id?: number | null;
-  include?: string[] | number[] | null;
-};
+export interface IdeasResponse {
+  data: Idea[];
+  limitExceeded: boolean;
+}
 
 export interface VoteError {
   canVote?: boolean

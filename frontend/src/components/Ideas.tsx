@@ -13,13 +13,12 @@ import { Skeleton } from "./ui/skeleton";
 import { Button } from "./ui/button";
 import { queryClient } from "@/lib/queryClient";
 import { api } from "@/lib/axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function Ideas() {
-  const { data: ideas, isLoading } = useIdeas({ include: ["votesCount"] });
-  const [canVote, setCanVote] = useState<boolean>(true); 
-    // OPTIMIZE: сохранять состояние в localStorage, чтобы при перезагрузке страницы 
-    // пользователь видел заблокированную кнопку
+  const { data, isLoading } = useIdeas();
+  const {data: ideas, limitExceeded} = data || {};
+  const [canVote, setCanVote] = useState<boolean>(false); 
 
   async function handleClick(ideaId: number) {
     try {
@@ -32,6 +31,12 @@ export function Ideas() {
         }
     }
   }
+
+  useEffect(() => {
+    if (limitExceeded !== undefined) {
+      setCanVote(!limitExceeded)
+    }
+  }, [limitExceeded])
 
   return (
     <Card className="min-w-[500px]">
@@ -72,7 +77,7 @@ export function Ideas() {
                       <Button
                         variant="success"
                         onClick={() => handleClick(idea.id)}
-                        disabled={!canVote}
+                        disabled={!canVote || !idea.enableVote}
                       >
                         Vote
                       </Button>

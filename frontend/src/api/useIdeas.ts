@@ -1,25 +1,21 @@
 import { api } from "@/lib/axios";
-import type { ApiRequestParams, Idea } from "@/lib/types";
+import type { IdeasResponse } from "@/lib/types";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-function unitQueryOptions({include}: ApiRequestParams) {
+function unitQueryOptions() {
   return queryOptions({
     queryKey: ['ideas'],
-    queryFn: async (): Promise<Idea[]> =>{  
-      const { data } =  await api.get('idea', {
-        params: {
-          include: include ? include.join(',') : '',
-        },
-      })
-      return data.data;
+    queryFn: async (): Promise<IdeasResponse> =>{  
+      const { data: {data, limitExceeded} } =  await api.get('idea')
+      return {data, limitExceeded };
     },
   });
 }
 
 
-export function useIdeas(params?: ApiRequestParams ) {
-  const { include = null } = params ?? {};
+
+export function useIdeas() {
   return useQuery({
-    ...unitQueryOptions({include})
+    ...unitQueryOptions()
   });
 }

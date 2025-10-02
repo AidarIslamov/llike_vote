@@ -22,8 +22,7 @@ export default async function ideaRoutes(fastify: FastifyInstance) {
         { method: ["withEnableVote", clientIP] },
       ]).findAll({
         order: [
-          [sequelize.literal('"enableVote"'), 'DESC'], // сначала те, за которые можно голосовать
-          [sequelize.literal('"votesCount"'), 'DESC']  // затем по популярности
+          [sequelize.literal('"votesCount"'), 'DESC']
         ]
       });
       return { data: ideas, limitExceeded:  totalVoteCount >= VOTE_LIMIT};
